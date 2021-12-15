@@ -32,4 +32,13 @@ server.listen(process.env.PORT),
     console.log(`server on port ${process.env.PORT}`);
   };
 
-//config
+// 1_ Register a user
+server.post("/register", async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    // Check if user exist
+    const hashedPassword = await hash(password, 10);
+    console.log(hashedPassword);
+ 
+  } catch (error) {}
+});
