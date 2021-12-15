@@ -5,6 +5,8 @@ const cors = require("cors");
 const { verify } = require("jsonwebtoken");
 const { hash, compare } = require("bcryptjs");
 
+const miniDB = require("./miniDB")
+
 // 1_ Register a user
 // 2_ Login a user
 // 3_ Logout a user
@@ -37,8 +39,22 @@ server.post("/register", async (req, res) => {
   const { email, password } = req.body;
   try {
     // Check if user exist
+    const user = miniDB.find(user => user.email === email);
+    if (user) throw new Error('User already exist')
+    // if not user exist, hash the password
     const hashedPassword = await hash(password, 10);
+    // insert the user in the database
+    miniDB.push({
+      id: miniDB.length,
+      email,
+      password: hashedPassword
+    })
+    res.send({ message: 'User Create'})
     console.log(hashedPassword);
  
-  } catch (error) {}
+  } catch (err) {
+    res.send({
+      error: `${err.message}`
+    })
+  }
 });
